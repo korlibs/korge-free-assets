@@ -1,5 +1,9 @@
 package spaceredux
 
+import com.soywiz.korge.view.*
+import com.soywiz.korim.format.*
+import com.soywiz.korio.file.std.*
+
 inline class SpaceShooterReduxView<T : View>(val genericView: View) {
 	@Suppress("UNCHECKED_CAST")
 	val view get() = genericView as T
