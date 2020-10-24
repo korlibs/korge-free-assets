@@ -1,20 +1,16 @@
 package spaceredux
 
-import com.soywiz.klock.milliseconds
+import com.soywiz.klock.*
 import com.soywiz.korge.view.*
 import com.soywiz.korge.view.tiles.*
 import com.soywiz.korim.bitmap.*
-import com.soywiz.korim.color.Colors
-import com.soywiz.korim.font.readTtfFont
+import com.soywiz.korim.bitmap.effect.*
+import com.soywiz.korim.color.*
+import com.soywiz.korim.font.*
 import com.soywiz.korim.format.*
-import com.soywiz.korim.vector.HorizontalAlign
-import com.soywiz.korim.vector.VerticalAlign
-import com.soywiz.korio.file.std.resourcesVfs
-
-// suspend fun main() = Korge(width = 512, height = 512, bgcolor = Colors["#2b2b2b"]) {
-//   spaceShooterRedux.putBackground(SpaceShooterReduxBackground.Type.BLUE)
-//   spaceShooterRedux.putDemoCode()
-// }
+import com.soywiz.korim.vector.*
+import com.soywiz.korim.vector.paint.*
+import com.soywiz.korio.file.std.*
 
 inline class SpaceShooterReduxWrapper<T : View>(val genericView: View) {
 	@Suppress("UNCHECKED_CAST")
@@ -24,9 +20,9 @@ inline class SpaceShooterReduxWrapper<T : View>(val genericView: View) {
 val <T : View> T.spaceShooterRedux get() = SpaceShooterReduxWrapper<T>(this)
 
 class SpaceShooterReduxBackground(
-	val view: TileMap,
-	var speedX: Double = 2.0,
-	var speedY: Double = 1.0,
+		val view: TileMap,
+		var speedX: Double = 2.0,
+		var speedY: Double = 1.0,
 ) {
 	init {
 		view.addFixedUpdater(16.milliseconds) {
@@ -42,9 +38,9 @@ class SpaceShooterReduxBackground(
 	}
 }
 suspend fun SpaceShooterReduxWrapper<out Container>.putBackground(
-	kind: SpaceShooterReduxBackground.Type = SpaceShooterReduxBackground.Type.BLACK,
-	speedX: Double = 2.0,
-	speedY: Double = 1.0
+		kind: SpaceShooterReduxBackground.Type = SpaceShooterReduxBackground.Type.BLACK,
+		speedX: Double = 2.0,
+		speedY: Double = 1.0
 ): SpaceShooterReduxBackground {
 	val file = resourcesVfs["space-shooter-redux/bgs/${kind.file}"]
 	val tileset = TileSet(mapOf(0 to file.readBitmap().toBMP32().slice()))
@@ -54,7 +50,15 @@ suspend fun SpaceShooterReduxWrapper<out Container>.putBackground(
 
 suspend fun SpaceShooterReduxWrapper<out Container>.putDemoCode() {
 	putBackground(SpaceShooterReduxBackground.Type.BLUE)
-	view.text2("space-shooter-redux!", fontSize = 24.0, color = Colors.RED, horizontalAlign = HorizontalAlign.CENTER, verticalAlign = VerticalAlign.MIDDLE, font = readKenVectorFutureTtf()).centerOnStage()
+	view.text2("space-shooter-redux!", fontSize = 24.0, horizontalAlign = HorizontalAlign.CENTER, verticalAlign = VerticalAlign.MIDDLE, font = readKenVectorFuture()).centerOnStage()
 }
 
-suspend fun readKenVectorFutureTtf() = resourcesVfs["space-shooter-redux/fonts/kenvector_future.ttf"].readTtfFont()
+suspend fun readKenVectorFuture() = resourcesVfs["space-shooter-redux/fonts/kenvector_future.ttf"]
+		.readTtfFont()
+		.toBitmapFont(
+				fontSize = 32,
+				paint = LinearGradientPaint(0, 0, 0, 16)
+						.addColorStop(0.0, Colors.YELLOW)
+						.addColorStop(1.0, Colors.YELLOWGREEN),
+				effect = BitmapEffect(dropShadowRadius = 2, dropShadowX = 1, dropShadowY = 1)
+		)
