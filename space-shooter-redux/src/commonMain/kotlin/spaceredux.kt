@@ -1,6 +1,7 @@
 package spaceredux
 
 import com.soywiz.klock.*
+import com.soywiz.korge.resources.*
 import com.soywiz.korge.view.*
 import com.soywiz.korge.view.tiles.*
 import com.soywiz.korim.bitmap.*
@@ -10,7 +11,11 @@ import com.soywiz.korim.font.*
 import com.soywiz.korim.format.*
 import com.soywiz.korim.vector.*
 import com.soywiz.korim.vector.paint.*
+import com.soywiz.korio.file.*
 import com.soywiz.korio.file.std.*
+import kotlinx.coroutines.*
+import kotlin.coroutines.*
+import kotlin.reflect.*
 
 inline class SpaceShooterReduxWrapper<T : View>(val genericView: View) {
 	@Suppress("UNCHECKED_CAST")
@@ -50,15 +55,17 @@ suspend fun SpaceShooterReduxWrapper<out Container>.putBackground(
 
 suspend fun SpaceShooterReduxWrapper<out Container>.putDemoCode() {
 	putBackground(SpaceShooterReduxBackground.Type.BLUE)
-	view.text2("space-shooter-redux!", fontSize = 24.0, horizontalAlign = HorizontalAlign.CENTER, verticalAlign = VerticalAlign.MIDDLE, font = readKenVectorFuture()).centerOnStage()
+	view.text2("space-shooter-redux!", fontSize = 24.0, horizontalAlign = HorizontalAlign.CENTER, verticalAlign = VerticalAlign.MIDDLE, font = resources().vectorFuture.get()).centerOnStage()
 }
 
-suspend fun readKenVectorFuture() = resourcesVfs["space-shooter-redux/fonts/kenvector_future.ttf"]
-		.readTtfFont()
-		.toBitmapFont(
-				fontSize = 32,
-				paint = LinearGradientPaint(0, 0, 0, 16)
-						.addColorStop(0.0, Colors.YELLOW)
-						.addColorStop(1.0, Colors.YELLOWGREEN),
-				effect = BitmapEffect(dropShadowRadius = 2, dropShadowX = 1, dropShadowY = 1)
-		)
+val Resources.vectorFuture: Resource<BitmapFont> by ResourceRef(ResourceScope.GLOBAL) { resources ->
+	resources.root["space-shooter-redux/fonts/kenvector_future.ttf"]
+			.readTtfFont()
+			.toBitmapFont(
+					fontSize = 32,
+					paint = LinearGradientPaint(0, 0, 0, 16)
+							.addColorStop(0.0, Colors.YELLOW)
+							.addColorStop(1.0, Colors.YELLOWGREEN),
+					effect = BitmapEffect(dropShadowRadius = 2, dropShadowX = 1, dropShadowY = 1)
+			)
+}
