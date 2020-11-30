@@ -9,8 +9,8 @@ import com.soywiz.korim.bitmap.effect.*
 import com.soywiz.korim.color.*
 import com.soywiz.korim.font.*
 import com.soywiz.korim.format.*
-import com.soywiz.korim.vector.*
-import com.soywiz.korim.vector.paint.*
+import com.soywiz.korim.paint.*
+import com.soywiz.korim.text.*
 import com.soywiz.korio.file.std.*
 import com.soywiz.korio.resources.*
 
@@ -22,9 +22,9 @@ inline class SpaceShooterReduxWrapper<T : View>(val genericView: View) {
 val <T : View> T.spaceShooterRedux get() = SpaceShooterReduxWrapper<T>(this)
 
 class SpaceShooterReduxBackground(
-		val view: TileMap,
-		var speedX: Double = 2.0,
-		var speedY: Double = 1.0,
+	val view: TileMap,
+	var speedX: Double = 2.0,
+	var speedY: Double = 1.0,
 ) {
 	init {
 		view.addFixedUpdater(16.milliseconds) {
@@ -40,9 +40,9 @@ class SpaceShooterReduxBackground(
 	}
 }
 suspend fun SpaceShooterReduxWrapper<out Container>.putBackground(
-		kind: SpaceShooterReduxBackground.Type = SpaceShooterReduxBackground.Type.BLACK,
-		speedX: Double = 2.0,
-		speedY: Double = 1.0
+	kind: SpaceShooterReduxBackground.Type = SpaceShooterReduxBackground.Type.BLACK,
+	speedX: Double = 2.0,
+	speedY: Double = 1.0
 ): SpaceShooterReduxBackground {
 	val file = resourcesVfs["space-shooter-redux/bgs/${kind.file}"]
 	val tileset = TileSet(mapOf(0 to file.readBitmap().toBMP32().slice()))
@@ -52,7 +52,9 @@ suspend fun SpaceShooterReduxWrapper<out Container>.putBackground(
 
 suspend fun SpaceShooterReduxWrapper<out Container>.putDemoCode() {
 	putBackground(SpaceShooterReduxBackground.Type.BLUE)
-	view.text2("space-shooter-redux!", fontSize = 24.0, horizontalAlign = HorizontalAlign.CENTER, verticalAlign = VerticalAlign.MIDDLE, font = resources().spaceShooterReduxResources.vectorFutureFontBitmap).centerOnStage()
+	view.text("space-shooter-redux!", textSize = 24.0, alignment = TextAlignment.MIDDLE_CENTER, font = resources().spaceShooterReduxResources.vectorFutureFontBitmap)
+		.position(view.root.width / 2, view.root.height / 2)
+		//.centerOnStage()
 }
 
 inline class SpaceReduxResourcesContainer(private val container: ResourcesContainer) : ResourcesContainer {
@@ -65,11 +67,11 @@ val SpaceReduxResourcesContainer.vectorFutureFontTtf by resourceFont("space-shoo
 
 val SpaceReduxResourcesContainer.vectorFutureFontBitmap by resourceGlobal {
 	spaceShooterReduxResources.vectorFutureFontTtf.get()
-			.toBitmapFont(
-					fontSize = 32,
-					paint = LinearGradientPaint(0, 0, 0, 16)
-							.addColorStop(0.0, Colors.YELLOW)
-							.addColorStop(1.0, Colors.YELLOWGREEN),
-					effect = BitmapEffect(dropShadowRadius = 2, dropShadowX = 1, dropShadowY = 1)
-			)
+		.toBitmapFont(
+			fontSize = 32,
+			paint = LinearGradientPaint(0, 0, 0, 16)
+				.addColorStop(0.0, Colors.YELLOW)
+				.addColorStop(1.0, Colors.YELLOWGREEN),
+			effect = BitmapEffect(dropShadowRadius = 2, dropShadowX = 1, dropShadowY = 1)
+		)
 }
